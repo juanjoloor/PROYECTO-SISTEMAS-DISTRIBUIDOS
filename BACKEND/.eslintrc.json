@@ -1,0 +1,14 @@
+{
+    "parserOptions": {
+      "ecmaVersion": 2018 //Usaremos la version 2018 en adelante
+    },
+    "extends": ["eslint:recommended", "prettier"], //Vamos a usar la config de eslint recomentadada y una version compatible con prettier
+    "env": { //Usaremos variables de de es6, node, mocha; para que al momento de hacer test eslint no saque error
+      "es6": true,
+      "node": true,
+      "mocha": true
+    },
+    "rules": { //Para que al dejar la consola en nuestro codigo no marque error si no un warning
+      "no-console": "warn"
+    }
+  }

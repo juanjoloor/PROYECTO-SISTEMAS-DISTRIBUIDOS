@@ -1,0 +1,281 @@
+<div >
+    <div class="card">
+      
+      <div class="card-body">
+        <div class="row mt-0">
+          <div class="col-md-3  ">
+            <div class="row">
+              <div class="col-6 mt-2"> 
+                <label for="">Numero de Pagina</label>
+              </div>
+              <div class="col-6">  <input id=""  [(ngModel)]="numero" name="1"
+                class="form-control" type="text" required /> </div>
+            </div>
+          </div>
+          <div class="col-md-5 mb-2 ">
+            <button type="button" class="btn btn-info btn-uppercase ml-1" (click)="getbatallasPaginacion(numero)">
+              <span *ngIf="requestServ.loading"><span class="spinner-border spinner-border-sm mr-2" role="status"
+                aria-hidden="true"></span>
+              Cargando...
+            </span>
+            <span *ngIf="!requestServ.loading">Cargar Batallas Por Paginacion</span>
+            </button>
+          </div>
+          <div style="text-align: end;" class="col-md-4 mb-2 ">
+            <button type="button" class="btn btn-red btn-uppercase ml-1 text-end" (click)="open(modal, null)">
+              Crear Nueva Batalla
+            </button>
+          </div>
+        </div>
+        <div class="table table-responsive" style="zoom: 0.92;">
+          <table class="col-md-12">
+            <thead>
+              <th scope="col">#</th>
+              <!-- <th scope="col">Tiempo de Batalla</th> -->
+              <th scope="col">Ganador</th>
+              <th scope="col">Trofeos Ganados</th>
+              <th scope="col">Coronas</th>
+              <th scope="col">Dano al Rey</th>
+          
+              <th scope="col">Perdedor</th>
+              <th scope="col">Opciones</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let div of batallas; let i = index">
+                <td>{{ i + 1 }}</td>
+                <!-- <td>{{ div.battleTime }}</td> -->
+                <td>{{ div.winner.tag }}</td>
+                <td>{{ div.winner.trophyChange }}</td>
+                <td>{{ div.winner.crowns }}</td>
+                <td>{{ div.winner.kingTowerHitPoints }}</td>
+        
+                <td>{{ div.loser.tag }}</td>
+                <td>
+                  <div ngbDropdown class="d-inline-block" container="body">
+                    <button class="btn" id="dropdownBasic1" ngbDropdownToggle>
+                      <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button class="dropdown-item" (click)="open(modal, div)">
+                        Editar
+                      </button>
+                      <button class="dropdown-item" (click)="eliminaritem(div._id)">
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div >
+    <div class="card">
+      
+      <div class="card-body">
+        <div class="row mt-0">
+          <div class="col-md-4 mb-2 ml-2">
+            <button type="button" class="btn btn-info btn-uppercase ml-1" (click)="traerTop()">
+              <span *ngIf="this.loading1"><span class="spinner-border spinner-border-sm mr-2" role="status"
+                aria-hidden="true"></span>
+              Cargando...
+            </span>
+            <span *ngIf="!this.loading1">CARGAR TOP 10 JUGADORES</span>
+            </button>
+          </div>
+        </div>
+        <div class="table table-responsive">
+          <table class="col-md-12">
+            <thead>
+              <th scope="col">#</th>
+              <th scope="col">Identifiacion del Jugador</th>
+              <th scope="col">Victorias</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let div of topDies; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ div._id }}</td>
+                <td>{{ div.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div >
+    <div class="card">
+      
+      <div class="card-body">
+        <div class="row mt-0">
+          <div class="col-md-4 mb-2 ml-2">
+            <button type="button" class="btn btn-info btn-uppercase ml-1" (click)="traerTopCartas()">
+              <span *ngIf="this.loading2"><span class="spinner-border spinner-border-sm mr-2" role="status"
+                aria-hidden="true"></span>
+              Cargando...
+            </span>
+            <span *ngIf="!this.loading2">CARGAR TOP 10 CARTAS MAS USADAS</span>
+            </button>
+          </div>
+        </div>
+        <div class="table table-responsive">
+          <table class="col-md-12">
+            <thead>
+              <th scope="col">#</th>
+              <th scope="col">Identifiacion de la Carta</th>
+              <th scope="col">Numero de Veces Usadas </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let div of topDiesCartas; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ div._id }}</td>
+                <td>{{ div.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #modal let-modal>
+    <div class="animate__animated animate__fadeIn">
+      <div class="modal-header">
+        <h4 *ngIf="!item.edit" class="modal-title" id="modal-basic-title">
+          Crear nueva item
+        </h4>
+        <h4 *ngIf="item.edit" class="modal-title" id="modal-basic-title">
+          Editar item
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="gestion()" #form="ngForm">
+        <div class="modal-body">
+          <div class="row">
+             <!-- atributos para tabla -->
+            <div class="col-6">
+              <div class="form-group">
+                <label for="">ID GANADOR</label>
+                <input id=""  [(ngModel)]="item.winner.tag" name="1"
+                  class="form-control" type="text" required />
+              </div>
+            </div>
+           <div class="col-6">
+              <div class="form-group">
+                <label for="trophyChange">TROFEOS GANDOR</label>
+                <input id="trophyChange" [value]="item.winner.trophyChange" [(ngModel)]="item.winner.trophyChange" name="trophyChange"
+                  class="form-control" type="text" required />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="crowns">CORONAS GANADOR</label>
+                <input id="crowns" [value]="item.winner.crowns" [(ngModel)]="item.winner.crowns" name="crowns"
+                  class="form-control" type="text" required />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="numeroCuenta">DANO AL REY </label>
+                <input id="kingTowerHitPoints" [value]="item.winner.kingTowerHitPoints" [(ngModel)]="item.winner.kingTowerHitPoints" name="kingTowerHitPoints"
+                  class="form-control" type="text" required />
+              </div>
+            </div>
+         
+       
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta1">Carta 1</label>
+                <input id="carta1" [value]="item.winner.card1.id" [(ngModel)]="item.winner.card1.id" name="carta1"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta2">Carta 2</label>
+                <input id="carta2" [value]="item.winner.card2.id" [(ngModel)]="item.winner.card2.id" name="carta2"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta3">Carta 3</label>
+                <input id="carta3" [value]="item.winner.card3.id" [(ngModel)]="item.winner.card3.id" name="carta3"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta2">Carta 4</label>
+                <input id="carta2" [value]="item.winner.card4.id" [(ngModel)]="item.winner.card4.id" name="carta4"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta5">Carta 5</label>
+                <input id="carta5" [value]="item.winner.card5.id" [(ngModel)]="item.winner.card5.id" name="carta5"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta6">Carta 6</label>
+                <input id="carta6" [value]="item.winner.card6.id" [(ngModel)]="item.winner.card6.id" name="carta6"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta7">Carta 7</label>
+                <input id="carta7" [value]="item.winner.card7.id" [(ngModel)]="item.winner.card7.id" name="carta7"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="carta8">Carta 8</label>
+                <input id="carta8" [value]="item.winner.card8.id" [(ngModel)]="item.winner.card8.id" name="carta8"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            <div class="col-6">
+              <div class="form-group">
+                <label for="loser">ID PERDEDOR</label>
+                <input id="loser" [value]="item.loser.tag" [(ngModel)]="item.loser.tag" name="loser"
+                  class="form-control" type="text" required />
+              </div>
+            </div> 
+
+            
+        <!-- // atributos para map reduce -->
+           
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-info" type="submit" [disabled]="!form.valid">
+            <span *ngIf="requestServ.loading"><span class="spinner-border spinner-border-sm mr-2" role="status"
+                aria-hidden="true"></span>
+              Loading...
+            </span>
+            <span *ngIf="!requestServ.loading">Guardar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

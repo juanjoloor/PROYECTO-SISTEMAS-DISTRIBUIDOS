@@ -1,0 +1,169 @@
+swagger: "2.0"
+info:
+  description: "Api Rest, desarrollada para la materia de Base de Datos Avanzados"
+  version: "1.0.0"
+  title: "CLASH ROYALE API"
+  # contact:
+  #   email: "-@espol.edu.ec"
+host: "localhost:3000"
+basePath: "/api/battle"
+tags:
+- name: "Map-Reduce"
+  description: "Endpoints que aplican Map-Reduce para obtener información sobre las batallas"
+- name: "CRUD"
+  description: "Operaciones de batallas"
+schemes:
+- "https"
+- "http"
+paths:
+  /top10-player:
+    get:
+      tags:
+      - "Map-Reduce"
+      summary: "Top 10 players"
+      description: "Obtiene el Top 10 de Jugadores con más batalla ganadas"
+      operationId: "getPlayers"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        default:
+          description: "<response>"
+  /top10-cards:
+    get:
+      tags:
+      - "Map-Reduce"
+      summary: "Top 10 cards"
+      description: Obtiene el Top 10 cartas más usadas por los ganadores en batallas"
+      operationId: "getCards"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+  /:
+    get:
+      tags:
+      - "CRUD"
+      summary: "Get Battles"
+      description: "Obtiene todas las battles de la base de datos(Con Pagineo)"
+      operationId: "getBattles"
+      parameters:
+      - name: "pageNumber"
+        in: "query"
+        description: "Número de página"
+        default: 0
+        required: false
+        type: "number"
+      - name: "pageSize"
+        in: "query"
+        description: "Cantidad de registros por página"
+        default: 10
+        required: false
+        type: "number"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+    post:
+      tags:
+      - "CRUD"
+      summary: "Add Battle"
+      description: "Crea una batalla y la agrega a la base"
+      operationId: "addBattle"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Objeto de batalla a ser añadido a la base"
+        required: true
+        schema:
+          $ref: "#/definitions/Battle"
+      responses:
+
+  /{battleId}:
+    get:
+      tags:
+      - "CRUD"
+      summary: "Get Battle by id"
+      description: "Obtiene los datos de una batalla en específico"
+      operationId: "getBattleById"
+      parameters:
+      - in: path
+        name: battleId
+        required: true
+        type: "number"
+        description: "Identificador de la batalla a consultar"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+      
+    put:
+      tags:
+      - "CRUD"
+      summary: "Update Battle"
+      description: "Actualiza una batalla"
+      operationId: "updateBattle"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: path
+        name: battleId
+        required: true
+        type: "number"
+        description: "Identificador de la batalla a consultar"
+      - in: "body"
+        name: "body"
+        description: "Objeto de batalla a ser añadido a la base"
+        required: true
+        schema:
+          $ref: "#/definitions/Battle"
+      responses:
+
+definitions:
+  Battle:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      battleTime:
+        type: "string"
+      arena:
+        type: "object"
+        properties:
+          id:
+            type: "string"
+      gameMode:
+        type: "object"
+        properties:
+          startingTrophies:
+            type: "string"
+      average:
+        type: "object"
+        properties:
+          id:
+            type: "string"
+      winner:
+        $ref: "#/definitions/Player"
+      loser:
+        $ref: "#/definitions/Player"
+  Player:
+    type: "object"
+    properties:
+      tag:
+        type: "string"
+      cards:
+        type: "object"
+        properties:
+          list:
+            type: "string"
+
